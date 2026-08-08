@@ -1,0 +1,185 @@
+/*
+  style.css
+  ---------
+  Small custom styles that sit ON TOP of Bootstrap to give the app its own
+  identity (sidebar look, colour badges for statuses, etc). We deliberately
+  keep this file small - Bootstrap utility classes handle most of the
+  layout work directly inside the HTML templates.
+*/
+
+body {
+    background-color: #f4f6f9;
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar {
+    width: 230px;
+    min-height: 100vh;
+    background-color: #1f2937;
+    color: #e5e7eb;
+}
+
+.sidebar-brand {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.sidebar-link {
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 0.2rem;
+    display: block;
+}
+
+.sidebar-link:hover {
+    background-color: #374151;
+    color: #fff;
+}
+
+.sidebar-link.active {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+/* ---------- Topbar ---------- */
+.topbar {
+    background-color: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* ---------- Auth pages (login/register) ---------- */
+.auth-card {
+    border: none;
+    border-radius: 12px;
+}
+
+.flash-overlay {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1050;
+    width: 90%;
+    max-width: 480px;
+}
+
+/* Left-side photo hero used on login/register pages */
+.hero-col {
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+}
+
+.hero-img {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+}
+
+.hero-overlay-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 2.5rem;
+    color: #fff;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+}
+
+.hero-overlay-text h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.hero-overlay-text p {
+    max-width: 480px;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+/* ---------- Trek detail page hero banner ---------- */
+.trek-hero {
+    height: 320px;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.trek-hero-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0));
+}
+
+/* ---------- Trek photo cards (User "Browse Treks" grid) ---------- */
+.trek-card {
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.trek-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,0.12) !important;
+}
+
+.trek-card-img {
+    height: 170px;
+    object-fit: cover;
+}
+
+.trek-card-difficulty {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+}
+
+/* ---------- Dashboard stat cards ---------- */
+.stat-card {
+    border: none;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-icon {
+    position: absolute;
+    right: 1rem;
+    bottom: 0.5rem;
+    font-size: 2rem;
+    color: #e5e7eb;
+}
+
+/* ---------- Status badges (colour-coded by trek/booking status) ---------- */
+.badge.status-open        { background-color: #16a34a; }
+.badge.status-approved    { background-color: #2563eb; }
+.badge.status-pending     { background-color: #d97706; }
+.badge.status-closed      { background-color: #6b7280; }
+.badge.status-ongoing     { background-color: #0891b2; }
+.badge.status-completed   { background-color: #7c3aed; }
+.badge.status-booked      { background-color: #2563eb; }
+.badge.status-cancelled   { background-color: #dc2626; }
+
+/* Difficulty badges (used on trek cards / trek detail hero) */
+.badge.status-easy        { background-color: #16a34a; }
+.badge.status-moderate    { background-color: #d97706; }
+.badge.status-hard        { background-color: #dc2626; }
+
+/* ---------- Small thumbnail used in the Admin treks table ---------- */
+.trek-thumb {
+    width: 56px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+}

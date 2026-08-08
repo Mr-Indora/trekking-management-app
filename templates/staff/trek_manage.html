@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Manage Trek{% endblock %}
+{% block page_title %}{{ trek.name }}{% endblock %}
+{% block content %}
+<a href="{{ url_for('staff.dashboard') }}" class="d-inline-block mb-3">&larr; Back to My Treks</a>
+
+<div class="trek-hero mb-4" style="background-image:url('{{ trek_photo(trek, 1200, 300) }}');">
+    <div class="trek-hero-overlay">
+        <span class="badge status-{{ trek.difficulty|lower }} mb-2">{{ trek.difficulty }}</span>
+        <h2 class="text-white mb-0">{{ trek.name }}</h2>
+        <p class="text-white-50 mb-0"><i class="bi bi-geo-alt"></i> {{ trek.location }}</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-7">
+        <div class="card mb-4">
+            <div class="card-header">Trek Information</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6"><div class="text-muted small">Location</div>{{ trek.location }}</div>
+                    <div class="col-6"><div class="text-muted small">Duration</div>{{ trek.duration_days }} Days</div>
+                    <div class="col-6"><div class="text-muted small">Start Date</div>{{ trek.start_date }}</div>
+                    <div class="col-6"><div class="text-muted small">End Date</div>{{ trek.end_date }}</div>
+                    <div class="col-6"><div class="text-muted small">Total Slots</div>{{ trek.total_slots }}</div>
+                    <div class="col-6"><div class="text-muted small">Status</div><span class="badge status-{{ trek.status|lower }}">{{ trek.status }}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update available slots / Open-Closed status -->
+        <div class="card mb-4">
+            <div class="card-header">Update Trek Details</div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('staff.update_trek', trek_id=trek.id) }}" class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label">Available Slots</label>
+                        <input type="number" name="available_slots" min="0" max="{{ trek.total_slots }}" value="{{ trek.available_slots }}" class="form-control">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Trek Status</label>
+                        <select name="status" class="form-select">
+                            {% for st in ['Open','Closed','Ongoing','Completed'] %}
+                                <option value="{{ st }}" {{ 'selected' if trek.status==st }}>{{ st }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <form method="POST" action="{{ url_for('staff.mark_started', trek_id=trek.id) }}">
+                <button class="btn btn-outline-primary" {{ 'disabled' if trek.status in ['Ongoing','Completed'] }}>Mark as Started</button>
+            </form>
+            <form method="POST" action="{{ url_for('staff.mark_completed', trek_id=trek.id) }}"
+                  onsubmit="return confirm('Mark this trek as completed? This will close all active bookings.');">
+                <button class="btn btn-outline-success" {{ 'disabled' if trek.status=='Completed' }}>Mark as Completed</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">Participants ({{ participants|length }})</div>
+            <div class="table-responsive">
+                <table class="table mb-0 align-middle">
+                    <thead><tr><th>User</th><th>Email</th><th>Booking Date</th><th>Status</th></tr></thead>
+                    <tbody>
+                    {% for p in participants %}
+                        <tr>
+                            <td>{{ p.user_name }}</td>
+                            <td>{{ p.user_email }}</td>
+                            <td>{{ p.booking_date | format_date }}</td>
+                            <td><span class="badge status-{{ p.status|lower }}">{{ p.status }}</span></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">No participants yet.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

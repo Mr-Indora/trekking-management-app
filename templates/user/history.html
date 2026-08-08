@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Trekking History{% endblock %}
+{% block page_title %}Trekking History{% endblock %}
+{% block content %}
+<h3 class="mb-4">Trekking History</h3>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead><tr><th>Trek Name</th><th>Trek Dates</th><th>Completed On</th><th>Status</th></tr></thead>
+            <tbody>
+            {% for b in bookings %}
+                <tr>
+                    <td>{{ b.trek_name }}</td>
+                    <td>{{ b.start_date }} - {{ b.end_date }}</td>
+                    <td>{{ b.end_date }}</td>
+                    <td><span class="badge status-completed">Completed</span></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-center text-muted py-3">No completed treks yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}My Bookings{% endblock %}
+{% block page_title %}My Bookings{% endblock %}
+{% block content %}
+<h3 class="mb-4">My Bookings</h3>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead><tr><th>Trek Name</th><th>Booking Date</th><th>Trek Dates</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for b in bookings %}
+                <tr>
+                    <td>{{ b.trek_name }}</td>
+                    <td>{{ b.booking_date | format_date }}</td>
+                    <td>{{ b.start_date }} - {{ b.end_date }}</td>
+                    <td><span class="badge status-{{ b.status|lower }}">{{ b.status }}</span></td>
+                    <td>
+                        <a href="{{ url_for('user.trek_details', trek_id=b.trek_id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        {% if b.status == 'Booked' %}
+                            <form method="POST" action="{{ url_for('user.cancel_booking', booking_id=b.id) }}" class="d-inline"
+                                  onsubmit="return confirm('Cancel this booking?');">
+                                <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-3">You have no bookings yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

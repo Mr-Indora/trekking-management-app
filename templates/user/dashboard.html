@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-1">Welcome, {{ session.get('name') }}!</h3>
+<p class="text-muted mb-4">Find your next adventure — here are treks currently open for booking.</p>
+
+<!-- Filter form: GET request keeps filters in the URL (?difficulty=..&location=..)
+     onchange="this.form.submit()" auto-submits as soon as a dropdown changes,
+     so the user doesn't need a separate "Apply" button. -->
+<form method="GET" class="row g-2 mb-4" style="max-width:520px;">
+    <div class="col-6">
+        <select name="difficulty" class="form-select" onchange="this.form.submit()">
+            <option value="All" {{ 'selected' if difficulty_filter=='All' }}>Difficulty: All</option>
+            {% for level in ['Easy','Moderate','Hard'] %}
+                <option value="{{ level }}" {{ 'selected' if difficulty_filter==level }}>{{ level }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-6">
+        <select name="location" class="form-select" onchange="this.form.submit()">
+            <option value="All" {{ 'selected' if location_filter=='All' }}>Location: All</option>
+            {% for loc in all_locations %}
+                <option value="{{ loc }}" {{ 'selected' if location_filter==loc }}>{{ loc }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</form>
+
+<!-- ===================== TREK PHOTO CARD GRID ===================== -->
+<!-- Instead of a plain data table, treks are shown as photo cards - similar
+     to how a real trekking/travel site (e.g. AllTrails) presents trails,
+     which is much more visual and inviting to browse than a table of text. -->
+<div class="row g-4 mb-5">
+    {% for t in treks %}
+        <div class="col-md-6 col-lg-4">
+            <a href="{{ url_for('user.trek_details', trek_id=t.id) }}" class="text-decoration-none text-reset">
+                <div class="card trek-card h-100 shadow-sm">
+                    <img src="{{ trek_photo(t) }}" class="card-img-top trek-card-img" alt="{{ t.name }}">
+                    <span class="badge trek-card-difficulty status-{{ t.difficulty|lower }}">{{ t.difficulty }}</span>
+                    <div class="card-body">
+                        <h5 class="card-title mb-1">{{ t.name }}</h5>
+                        <p class="text-muted small mb-2"><i class="bi bi-geo-alt"></i> {{ t.location }}</p>
+                        <div class="d-flex justify-content-between small text-muted mb-3">
+                            <span><i class="bi bi-calendar3"></i> {{ t.duration_days }} Days</span>
+                            <span><i class="bi bi-people"></i> {{ t.available_slots }} slots left</span>
+                        </div>
+                        <span class="btn btn-primary btn-sm w-100">Book Now</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% else %}
+        <div class="col-12">
+            <div class="text-center text-muted py-5">
+                <i class="bi bi-compass" style="font-size:2.5rem;"></i>
+                <p class="mt-2 mb-0">No treks match your filters right now. Try changing the difficulty or location.</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <span>My Recent Bookings</span>
+        <a href="{{ url_for('user.my_bookings') }}" class="small">View All &rarr;</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead><tr><th>Trek Name</th><th>Booking Date</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for b in my_bookings %}
+                <tr>
+                    <td>{{ b.trek_name }}</td>
+                    <td>{{ b.booking_date | format_date }}</td>
+                    <td><span class="badge status-{{ b.status|lower }}">{{ b.status }}</span></td>
+                    <td><a href="{{ url_for('user.trek_details', trek_id=b.trek_id) }}" class="btn btn-sm btn-outline-primary">View Details</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="4" class="text-center text-muted py-3">You have no bookings yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Register - Trekking Management{% endblock %}
+{% block auth_content %}
+<div class="row g-0 min-vh-100">
+
+    <!-- Same style hero as login.html, single static photo (no carousel
+         needed here since this page is usually visited only once). -->
+    <div class="col-lg-6 d-none d-lg-block hero-col">
+        <img src="https://picsum.photos/seed/trekregister/1000/1000" class="hero-img" alt="Trekking group">
+        <div class="hero-overlay-text">
+            <h1><i class="bi bi-signpost-split-fill"></i> Join the Trek</h1>
+            <p>Register as a Trekker to book your next adventure, or as Trek Staff to help guide one.</p>
+        </div>
+    </div>
+
+    <div class="col-lg-6 d-flex align-items-center justify-content-center p-4">
+        <div class="card shadow-sm auth-card w-100" style="max-width:440px;">
+            <div class="card-body p-4">
+                <h4 class="text-center mb-1 d-lg-none"><i class="bi bi-signpost-split-fill"></i> Trekking Management</h4>
+                <p class="text-center text-muted mb-4">Create a new account</p>
+
+                <!-- Note: Admin cannot register here on purpose - only
+                     Staff / User roles are offered in the dropdown below. -->
+                <form method="POST" action="{{ url_for('auth.register') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" name="contact" class="form-control" placeholder="Optional">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" name="confirm_password" class="form-control" required minlength="6">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">I am a</label>
+                        <select name="role" class="form-select" required>
+                            <option value="" selected disabled>-- Select Role --</option>
+                            <option value="user">User (Trekker)</option>
+                            <option value="staff">Trek Staff</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+                <p class="text-center mt-3 mb-0">
+                    Already have an account? <a href="{{ url_for('auth.login') }}">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

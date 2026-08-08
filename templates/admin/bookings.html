@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}All Bookings{% endblock %}
+{% block page_title %}Bookings{% endblock %}
+{% block content %}
+<h3 class="mb-3">All Bookings</h3>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead><tr><th>Booking ID</th><th>User</th><th>Trek</th><th>Booking Date</th><th>Status</th></tr></thead>
+            <tbody>
+            {% for b in bookings %}
+                <tr>
+                    <td>B{{ '%03d' % b.id }}</td>
+                    <td>{{ b.user_name }} ({{ b.user_email }})</td>
+                    <td>{{ b.trek_name }}</td>
+                    <td>{{ b.booking_date | format_date }}</td>
+                    <td><span class="badge status-{{ b.status|lower }}">{{ b.status }}</span></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-3">No bookings yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block page_title %}Search{% endblock %}
+{% block content %}
+<h3 class="mb-3">Search Treks / Staff / Users</h3>
+
+<form method="GET" class="mb-4" style="max-width:420px;">
+    <input type="text" name="q" value="{{ query_text }}" class="form-control" placeholder="Search by name or ID...">
+</form>
+
+{% if query_text %}
+<div class="card mb-3">
+    <div class="card-header">Treks ({{ trek_results|length }})</div>
+    <ul class="list-group list-group-flush">
+        {% for t in trek_results %}
+            <li class="list-group-item d-flex justify-content-between">
+                <span>#{{ t.id }} — {{ t.name }} ({{ t.location }})</span>
+                <a href="{{ url_for('admin.edit_trek', trek_id=t.id) }}" class="small">Open</a>
+            </li>
+        {% else %}
+            <li class="list-group-item text-muted">No matching treks.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">Staff ({{ staff_results|length }})</div>
+    <ul class="list-group list-group-flush">
+        {% for s in staff_results %}
+            <li class="list-group-item">#{{ s.id }} — {{ s.name }} ({{ s.email }}) — {{ s.status }}</li>
+        {% else %}
+            <li class="list-group-item text-muted">No matching staff.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="card">
+    <div class="card-header">Users ({{ user_results|length }})</div>
+    <ul class="list-group list-group-flush">
+        {% for u in user_results %}
+            <li class="list-group-item">#{{ u.id }} — {{ u.name }} ({{ u.email }}) — {{ u.status }}</li>
+        {% else %}
+            <li class="list-group-item text-muted">No matching users.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ trek.name }}{% endblock %}
+{% block page_title %}Trek Details{% endblock %}
+{% block content %}
+<a href="{{ url_for('user.dashboard') }}" class="d-inline-block mb-3">&larr; Back to Treks</a>
+
+<!-- Big hero photo at the top, like a real trail/trek detail page -->
+<div class="trek-hero mb-4" style="background-image:url('{{ trek_photo(trek, 1200, 400) }}');">
+    <div class="trek-hero-overlay">
+        <span class="badge status-{{ trek.difficulty|lower }} mb-2">{{ trek.difficulty }}</span>
+        <h2 class="text-white mb-0">{{ trek.name }}</h2>
+        <p class="text-white-50 mb-0"><i class="bi bi-geo-alt"></i> {{ trek.location }}</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3"><div class="text-muted small">Difficulty</div><strong>{{ trek.difficulty }}</strong></div>
+            <div class="col-6 col-md-3"><div class="text-muted small">Duration</div><strong>{{ trek.duration_days }} Days</strong></div>
+            <div class="col-6 col-md-3"><div class="text-muted small">Start Date</div><strong>{{ trek.start_date }}</strong></div>
+            <div class="col-6 col-md-3"><div class="text-muted small">End Date</div><strong>{{ trek.end_date }}</strong></div>
+        </div>
+        <h5>About this trek</h5>
+        <p>{{ trek.description or 'No description provided for this trek.' }}</p>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Available Slots</span>
+                    <strong>{{ trek.available_slots }} / {{ trek.total_slots }}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Status</span>
+                    <span class="badge status-{{ trek.status|lower }}">{{ trek.status }}</span>
+                </div>
+
+                {% if already_booked %}
+                    <button class="btn btn-secondary w-100" disabled>Already Booked</button>
+                {% elif trek.status != 'Open' %}
+                    <button class="btn btn-secondary w-100" disabled>Not Open for Booking</button>
+                {% elif trek.available_slots <= 0 %}
+                    <button class="btn btn-secondary w-100" disabled>Fully Booked</button>
+                {% else %}
+                    <form method="POST" action="{{ url_for('user.book_trek', trek_id=trek.id) }}">
+                        <button type="submit" class="btn btn-primary w-100">Book Now</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

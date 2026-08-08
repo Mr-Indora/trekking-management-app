@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block page_title %}Users{% endblock %}
+{% block content %}
+<h3 class="mb-3">Users (Trekkers)</h3>
+
+<form method="GET" class="mb-3" style="max-width:320px;">
+    <input type="text" name="q" value="{{ query_text }}" class="form-control" placeholder="Search users...">
+</form>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead><tr><th>User ID</th><th>Name</th><th>Email</th><th>Contact</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+            {% for u in users %}
+                <tr>
+                    <td>U{{ '%03d' % u.id }}</td><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ u.contact }}</td>
+                    <td>
+                        {% if u.status == 'blacklisted' %}
+                            <span class="badge bg-danger">Blacklisted</span>
+                        {% else %}
+                            <span class="badge bg-success">Active</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if u.status == 'blacklisted' %}
+                            <form method="POST" action="{{ url_for('admin.unblock_user', user_id=u.id) }}" class="d-inline">
+                                <button class="btn btn-sm btn-outline-success">Reinstate</button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('admin.blacklist_user', user_id=u.id) }}" class="d-inline"
+                                  onsubmit="return confirm('Blacklist this user?');">
+                                <button class="btn btn-sm btn-outline-danger">Blacklist</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-3">No users found.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

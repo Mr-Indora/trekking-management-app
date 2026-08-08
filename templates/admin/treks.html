@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Manage Treks{% endblock %}
+{% block page_title %}Treks{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Treks</h3>
+    <a href="{{ url_for('admin.add_trek') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add New Trek</a>
+</div>
+
+<!-- Search box: GET request to the same page with ?q=... -->
+<form method="GET" class="mb-3" style="max-width:320px;">
+    <input type="text" name="q" value="{{ query_text }}" class="form-control" placeholder="Search treks...">
+</form>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead>
+                <tr><th></th><th>ID</th><th>Trek Name</th><th>Location</th><th>Difficulty</th><th>Slots</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+            {% for t in treks %}
+                <tr>
+                    <td><img src="{{ trek_photo(t, 100, 70) }}" class="trek-thumb" alt="{{ t.name }}"></td>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.name }}</td>
+                    <td>{{ t.location }}</td>
+                    <td>{{ t.difficulty }}</td>
+                    <td>{{ t.available_slots }}/{{ t.total_slots }}</td>
+                    <td><span class="badge status-{{ t.status|lower }}">{{ t.status }}</span></td>
+                    <td>
+                        <a href="{{ url_for('admin.edit_trek', trek_id=t.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                        <form method="POST" action="{{ url_for('admin.delete_trek', trek_id=t.id) }}" class="d-inline"
+                              onsubmit="return confirm('Delete this trek? This cannot be undone.');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="8" class="text-center text-muted py-3">No treks found.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

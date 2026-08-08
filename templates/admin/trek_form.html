@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if trek else 'Add' }} Trek{% endblock %}
+{% block page_title %}{{ 'Edit Trek' if trek else 'Add New Trek' }}{% endblock %}
+{% block content %}
+<h3 class="mb-4">{{ 'Edit Trek' if trek else 'Add New Trek' }}</h3>
+
+<!-- Same form is reused for BOTH "Add" and "Edit" - if `trek` is None we
+     are adding a new one, otherwise we are editing an existing record. -->
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Trek Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ trek.name if trek else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" class="form-control" value="{{ trek.location if trek else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Difficulty</label>
+                    <select name="difficulty" class="form-select" required>
+                        {% for level in ['Easy','Moderate','Hard'] %}
+                            <option value="{{ level }}" {{ 'selected' if trek and trek.difficulty==level }}>{{ level }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Duration (Days)</label>
+                    <input type="number" name="duration_days" min="1" class="form-control" value="{{ trek.duration_days if trek else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Total Slots</label>
+                    <input type="number" name="total_slots" min="1" class="form-control" value="{{ trek.total_slots if trek else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ trek.start_date if trek else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">End Date</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ trek.end_date if trek else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Assign Staff</label>
+                    <select name="assigned_staff_id" class="form-select">
+                        <option value="">-- Select Staff --</option>
+                        {% for s in staff_list %}
+                            <option value="{{ s.id }}" {{ 'selected' if trek and trek.assigned_staff_id==s.id }}>{{ s.name }} ({{ s.email }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select" required>
+                        {% for st in ['Pending','Approved','Open','Ongoing','Closed','Completed'] %}
+                            <option value="{{ st }}" {{ 'selected' if trek and trek.status==st or (not trek and st=='Pending') }}>{{ st }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Trek Photo URL <span class="text-muted small">(optional - paste any image link)</span></label>
+                    <input type="url" name="image_url" id="imageUrlInput" class="form-control"
+                           placeholder="https://example.com/photo.jpg"
+                           value="{{ trek.image_url if trek and trek.image_url else '' }}">
+                    <div class="form-text">Leave blank to auto-use a placeholder trek photo.</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Preview</label>
+                    <img id="imagePreview" src="{{ trek_photo(trek) if trek else 'https://picsum.photos/seed/trekpreview/240/140' }}"
+                         class="rounded w-100" style="height:90px;object-fit:cover;" alt="Trek photo preview">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3">{{ trek.description if trek else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ url_for('admin.treks') }}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Small, purely COSMETIC bit of JavaScript: as the Admin types/pastes
+    // an image URL, we live-update the preview thumbnail above. This does
+    // NOT affect any core functionality (form still submits normally via
+    // plain HTML POST) - it's just a nicer editing experience.
+    document.getElementById('imageUrlInput').addEventListener('input', function () {
+        const preview = document.getElementById('imagePreview');
+        preview.src = this.value.trim() || 'https://picsum.photos/seed/trekpreview/240/140';
+    });
+</script>
+{% endblock %}

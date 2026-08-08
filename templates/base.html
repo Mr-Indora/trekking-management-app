@@ -1,0 +1,117 @@
+<!--
+    base.html
+    ---------
+    The MASTER TEMPLATE. Every other page "extends" this file using
+    Jinja2's extends tag, so the navbar/sidebar/flash-messages code is
+    written ONLY ONCE here instead of being copy-pasted onto every page.
+
+    The "content" block below is a placeholder - child templates fill it
+    in with their own page-specific HTML using their own content block.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trekking Management App{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS (only allowed CSS framework per problem statement) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons for simple icons in the sidebar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <!-- Our own small custom stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+{% if session.get('user_id') %}
+<!-- ==================== LOGGED-IN LAYOUT: Sidebar + Topbar ==================== -->
+<div class="d-flex">
+
+    <!-- ---------- SIDEBAR ---------- -->
+    <nav class="sidebar d-flex flex-column p-3">
+        <div class="sidebar-brand mb-4">
+            <i class="bi bi-signpost-split-fill"></i> Trekking Mgmt
+        </div>
+
+        {% if session.get('role') == 'admin' %}
+            <a class="sidebar-link {{ 'active' if request.endpoint=='admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint in ['admin.treks','admin.add_trek','admin.edit_trek'] }}" href="{{ url_for('admin.treks') }}"><i class="bi bi-map"></i> Treks</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='admin.staff_requests' }}" href="{{ url_for('admin.staff_requests') }}"><i class="bi bi-person-badge"></i> Staff</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='admin.users' }}" href="{{ url_for('admin.users') }}"><i class="bi bi-people"></i> Users</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='admin.bookings' }}" href="{{ url_for('admin.bookings') }}"><i class="bi bi-journal-check"></i> Bookings</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='admin.search' }}" href="{{ url_for('admin.search') }}"><i class="bi bi-search"></i> Search</a>
+        {% elif session.get('role') == 'staff' %}
+            <a class="sidebar-link {{ 'active' if request.endpoint=='staff.dashboard' }}" href="{{ url_for('staff.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='staff.dashboard' }}" href="{{ url_for('staff.dashboard') }}"><i class="bi bi-map"></i> My Treks</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='staff.profile' }}" href="{{ url_for('staff.profile') }}"><i class="bi bi-person-circle"></i> Profile</a>
+        {% elif session.get('role') == 'user' %}
+            <a class="sidebar-link {{ 'active' if request.endpoint=='user.dashboard' }}" href="{{ url_for('user.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='user.dashboard' }}" href="{{ url_for('user.dashboard') }}"><i class="bi bi-compass"></i> Browse Treks</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='user.my_bookings' }}" href="{{ url_for('user.my_bookings') }}"><i class="bi bi-journal-bookmark"></i> My Bookings</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='user.history' }}" href="{{ url_for('user.history') }}"><i class="bi bi-clock-history"></i> History</a>
+            <a class="sidebar-link {{ 'active' if request.endpoint=='user.profile' }}" href="{{ url_for('user.profile') }}"><i class="bi bi-person-circle"></i> Profile</a>
+        {% endif %}
+
+        <a class="sidebar-link mt-auto text-danger" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </nav>
+
+    <!-- ---------- MAIN CONTENT AREA ---------- -->
+    <div class="flex-grow-1">
+        <!-- Topbar -->
+        <div class="topbar d-flex justify-content-between align-items-center px-4 py-2">
+            <div class="fw-semibold">{% block page_title %}{% endblock %}</div>
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle"></i> {{ session.get('name') }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text text-capitalize text-muted small">Role: {{ session.get('role') }}</span></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <!-- Flash messages: Flask's built-in way to show one-time
+                 notifications (success/error/info) after a redirect. -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- ==================== LOGGED-OUT LAYOUT (Login / Register pages) ==================== -->
+<!-- Flash messages float on top; the actual page layout (hero image +
+     form, or just a centered card) is fully controlled by each child
+     template via the auth_content block below. -->
+<div class="flash-overlay">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+{% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

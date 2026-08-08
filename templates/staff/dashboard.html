@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard{% endblock %}
+{% block page_title %}My Dashboard{% endblock %}
+{% block content %}
+<h3 class="mb-4">My Dashboard</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card"><div class="card-body">
+            <div class="text-muted small">Assigned Treks</div>
+            <div class="fs-3 fw-bold">{{ my_treks|length }}</div>
+            <i class="bi bi-map stat-icon"></i>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card"><div class="card-body">
+            <div class="text-muted small">Total Participants</div>
+            <div class="fs-3 fw-bold">{{ total_participants }}</div>
+            <i class="bi bi-people stat-icon"></i>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card"><div class="card-body">
+            <div class="text-muted small">Open Treks</div>
+            <div class="fs-3 fw-bold">{{ open_treks_count }}</div>
+            <i class="bi bi-signpost stat-icon"></i>
+        </div></div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">My Assigned Treks</div>
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead><tr><th></th><th>Trek Name</th><th>Location</th><th>Participants</th><th>Slots</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for t in my_treks %}
+                <tr>
+                    <td><img src="{{ trek_photo(t, 100, 70) }}" class="trek-thumb" alt="{{ t.name }}"></td>
+                    <td>{{ t.name }}</td>
+                    <td>{{ t.location }}</td>
+                    <td>{{ t.participant_count }}</td>
+                    <td>{{ t.available_slots }}/{{ t.total_slots }}</td>
+                    <td><span class="badge status-{{ t.status|lower }}">{{ t.status }}</span></td>
+                    <td><a href="{{ url_for('staff.manage_trek', trek_id=t.id) }}" class="btn btn-sm btn-primary">Manage</a></td>
+                </tr>
+            {% else %}
+                <tr><td colspan="7" class="text-center text-muted py-3">No treks assigned to you yet.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

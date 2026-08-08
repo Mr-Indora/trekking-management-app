@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Login - Trekking Management{% endblock %}
+{% block auth_content %}
+<div class="row g-0 min-vh-100">
+
+    <!-- ============ LEFT: Photo carousel hero (hidden on small screens) ============ -->
+    <!-- This uses Bootstrap's built-in Carousel component (part of the
+         Bootstrap JS bundle already loaded in base.html) - it is PURELY
+         decorative and has nothing to do with core app logic, so it does
+         not break the "JS should NOT be used for executing the core
+         requirements" rule; login itself is a plain HTML form POST. -->
+    <div class="col-lg-7 d-none d-lg-block hero-col">
+        <div id="trekCarousel" class="carousel slide carousel-fade h-100" data-bs-ride="carousel" data-bs-interval="4000">
+            <div class="carousel-inner h-100">
+                <div class="carousel-item active h-100">
+                    <img src="https://picsum.photos/seed/trekhero1/1200/1000" class="hero-img" alt="Mountain trek">
+                </div>
+                <div class="carousel-item h-100">
+                    <img src="https://picsum.photos/seed/trekhero2/1200/1000" class="hero-img" alt="Forest trail">
+                </div>
+                <div class="carousel-item h-100">
+                    <img src="https://picsum.photos/seed/trekhero3/1200/1000" class="hero-img" alt="Valley view">
+                </div>
+            </div>
+        </div>
+        <div class="hero-overlay-text">
+            <h1><i class="bi bi-signpost-split-fill"></i> Trekking Management</h1>
+            <p>Plan treks, manage staff, and book your next adventure — all in one place.</p>
+        </div>
+    </div>
+
+    <!-- ============ RIGHT: Login form ============ -->
+    <div class="col-lg-5 d-flex align-items-center justify-content-center p-4">
+        <div class="card shadow-sm auth-card w-100" style="max-width:400px;">
+            <div class="card-body p-4">
+                <h4 class="text-center mb-1 d-lg-none"><i class="bi bi-signpost-split-fill"></i> Trekking Management</h4>
+                <p class="text-center text-muted mb-4">Login to your account</p>
+
+                <!-- On submit, the browser sends a POST request to /login
+                     (see routes/auth.py -> login()) which checks credentials. -->
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="remember">
+                        <label class="form-check-label" for="remember">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <p class="text-center mt-3 mb-0">
+                    Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a>
+                </p>
+                <hr>
+                <p class="text-center text-muted small mb-0">
+                    Admin demo login: admin@trekking.com / Admin@123
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
