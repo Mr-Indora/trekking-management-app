@@ -1,0 +1,8 @@
+# ---------------------------------------------------------------------------
+# requirements.txt
+# Only 2 external packages are needed - everything else (sqlite3, etc.) is
+# part of Python's standard library.
+# Install with:  pip install -r requirements.txt
+# ---------------------------------------------------------------------------
+Flask>=3.0
+Werkzeug>=3.0
